@@ -1,3 +1,5 @@
+require('dotenv').config();
+const myKey = process.env.MY_API_KEY;
 /* Empty JS object to act as endpoint for all routes */
 projectData = {};
 
@@ -29,6 +31,7 @@ function listening(){
 
 app.get('/all', function (req, res) {
     console.log(projectData);
+    res.send({'myKey':myKey});
 });
 
 const data = []
