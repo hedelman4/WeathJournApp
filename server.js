@@ -2,6 +2,7 @@ require('dotenv').config();
 const myKey = process.env.MY_API_KEY;
 /* Empty JS object to act as endpoint for all routes */
 projectData = {};
+projectData['myKey'] = myKey;
 
 // Express to run server and routes
 const express = require('express');
@@ -31,7 +32,7 @@ function listening(){
 
 app.get('/all', function (req, res) {
     console.log(projectData);
-    res.send({'myKey':myKey});
+    res.send(projectData);
 });
 
 const data = []

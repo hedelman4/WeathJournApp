@@ -1,11 +1,9 @@
 let d = new Date();
 let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
-const baseURL = 'https://api.openweathermap.org/data/2.5/weather?lat=';
-const zipBaseURL = 'http://api.openweathermap.org/geo/1.0/zip?zip=';
+const baseURL = 'https://api.openweathermap.org/data/2.5/weather?zip=';
 let apiKey = '';
-let lat = '';
-let lon = '';
 let zipCode = '';
+let content = '';
 let temp = '';
 
 const getData = async ( url = '')=>{
@@ -19,7 +17,6 @@ const getData = async ( url = '')=>{
   
     try {
         const newData = await response.json();
-        console.log(newData);
         apiKey = newData['myKey'];
         return newData;
     }
@@ -31,7 +28,6 @@ const getData = async ( url = '')=>{
 getData('/all');
 
 const postData = async ( url = '', data = {})=>{
-    console.log(data);
     const response = await fetch(url, {
         method: 'POST',
         credentials: 'same-origin', 
@@ -43,7 +39,6 @@ const postData = async ( url = '', data = {})=>{
   
     try {
         const newData = await response.json();
-        console.log(newData);
         return newData;
     }
     catch(error) {
@@ -51,17 +46,41 @@ const postData = async ( url = '', data = {})=>{
     }
 };
 
-postData('/add', {temperature:'50', date:'1/1/2023', content:'good'});
-
-const openWeatherComb = async ()=> {
-    zipCode = document.getElementById('zip').value;
-    const response = await fetch('https://api.openweathermap.org/data/2.5/weather?zip='+zipCode+',US&appid='+apiKey);
+const openWeatherComb = async (zipCode)=> {
+    const response = await fetch(baseURL+zipCode+',US&appid='+apiKey);
     try {
         const responseData = await response.json();
-        console.log(responseData);
         temp = JSON.stringify(responseData['main']['temp']);
+        return temp
     }
     catch(error) {
         console.log("error", error);   
     }
 }
+
+document.getElementById('generate').addEventListener('click', performAction);
+
+function performAction() {
+    zipCode = document.getElementById('zip').value;
+    content = document.getElementById('feelings').value;
+    openWeatherComb(zipCode)
+    .then(   
+        postData('/add', {temperature:temp, date:newDate, content:content})
+    )
+    .then(
+        updateUI()
+    )
+}
+
+const updateUI = async () => {
+    const request = await fetch('/all');
+    try{
+        const allData = await request.json();
+        console.log(allData)
+        document.getElementById('temp').innerHTML = allData['temperature'];
+        document.getElementById('date').innerHTML = allData['date'];
+        document.getElementById('content').innerHTML = allData['content'];
+    }catch(error){
+      console.log("error", error);
+    }
+  }
