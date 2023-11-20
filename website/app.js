@@ -1,5 +1,5 @@
 let d = new Date();
-let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
+let newDate = d.getMonth()+1+'.'+ d.getDate()+'.'+ d.getFullYear();
 const baseURL = 'https://api.openweathermap.org/data/2.5/weather?zip=';
 let apiKey = '';
 let zipCode = '';
@@ -77,9 +77,9 @@ const updateUI = async () => {
     try{
         const allData = await request.json();
         console.log(allData)
-        document.getElementById('temp').innerHTML = allData['temperature'];
-        document.getElementById('date').innerHTML = allData['date'];
-        document.getElementById('content').innerHTML = allData['content'];
+        document.getElementById('temp').innerHTML = allData.temperature;
+        document.getElementById('date').innerHTML = allData.date;
+        document.getElementById('content').innerHTML = allData.content;
     }catch(error){
       console.log("error", error);
     }
